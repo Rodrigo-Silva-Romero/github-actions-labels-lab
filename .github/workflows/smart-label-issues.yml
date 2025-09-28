@@ -18,7 +18,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           NUMBER: ${{ github.event.issue.number }}
-      
+
       - name: Add feature label for feature requests
         if: contains(github.event.issue.title, 'feature') || contains(github.event.issue.body, 'feature')
         run: gh issue edit "$NUMBER" --add-label "enhancement,triage"
@@ -26,7 +26,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           NUMBER: ${{ github.event.issue.number }}
-      
+
       - name: Add default triage label
         if: "!contains(github.event.issue.title, 'bug') && !contains(github.event.issue.title, 'feature')"
         run: gh issue edit "$NUMBER" --add-label "triage"
@@ -34,3 +34,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           NUMBER: ${{ github.event.issue.number }}
+
+      - name: Add welcome comment
+        run: |
+          gh issue comment "$NUMBER" --body "¡Gracias por reportar este issue!  
+          Ha sido etiquetado automáticamente para revisión inicial.  
+          Un miembro del equipo lo revisará pronto."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+
+          
