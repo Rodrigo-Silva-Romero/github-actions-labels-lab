@@ -1,0 +1,36 @@
+name: Smart issue labeling
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  label_issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Add bug label for bug reports
+        if: contains(github.event.issue.title, 'bug') || contains(github.event.issue.body, 'bug')
+        run: gh issue edit "$NUMBER" --add-label "bug,triage"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+      
+      - name: Add feature label for feature requests
+        if: contains(github.event.issue.title, 'feature') || contains(github.event.issue.body, 'feature')
+        run: gh issue edit "$NUMBER" --add-label "enhancement,triage"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+      
+      - name: Add default triage label
+        if: "!contains(github.event.issue.title, 'bug') && !contains(github.event.issue.title, 'feature')"
+        run: gh issue edit "$NUMBER" --add-label "triage"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
